@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>TyrolSky.Portal.Configuration</AssemblyName>
+        <RootNamespace>TyrolSky.Portal.Configuration</RootNamespace>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+
+</Project>

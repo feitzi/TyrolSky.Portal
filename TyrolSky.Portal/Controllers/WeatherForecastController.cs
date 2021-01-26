@@ -25,12 +25,14 @@ namespace TyrolSky.Portal.Controllers {
         public IEnumerable<WeatherForecast> Get([Required] string sample) {
             _logger.LogInformation("This is a test call");
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)],
-                Sample = sample
-            }).ToArray();
+            return Enumerable.Range(1, 5)
+                .Select(index => new WeatherForecast {
+                    Date = DateTime.Now.AddDays(index),
+                    TemperatureC = rng.Next(-20, 55),
+                    Summary = Summaries[rng.Next(Summaries.Length)],
+                    Sample = sample
+                })
+                .ToArray();
         }
     }
 

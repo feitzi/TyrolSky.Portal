@@ -26,7 +26,7 @@
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get([Required] string sample) {
+        public IEnumerable<WeatherForecast> Get() {
             _logger.LogInformation("This is a test call {@ConfigValue}", Configuration.Value);
             
             Random rng = new Random();
@@ -35,7 +35,6 @@
                     Date = DateTime.Now.AddDays(index),
                     TemperatureC = rng.Next(-20, 55),
                     Summary = Summaries[rng.Next(Summaries.Length)],
-                    Sample = sample
                 })
                 .ToArray();
         }

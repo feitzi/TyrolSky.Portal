@@ -9,7 +9,6 @@ namespace TyrolSky.Portal {
 
         public int TemperatureF => 32 + (int) (TemperatureC / 0.5556);
 
-        public string Sample { get; set; }
         public string Summary { get; set; }
     }
 

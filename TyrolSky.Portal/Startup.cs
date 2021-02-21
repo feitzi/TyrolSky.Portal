@@ -6,7 +6,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 namespace TyrolSky.Portal {
+    using System;
+    using System.ServiceProcess;
     using Configuration;
+    using HealthCheck;
+    using HealthChecks.UI.Client;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
     public class Startup {
         public Startup(IConfiguration configuration) {
@@ -17,9 +22,19 @@ namespace TyrolSky.Portal {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-
             services.Configure<SampleConfiguration>(Configuration.GetSection(SampleConfiguration.ConfigPath));
-            
+
+            services.AddHealthChecks()
+                .AddDiskStorageHealthCheck(options => {
+                    options.AddDrive("C:\\", 1000);
+                })
+                .AddWindowsServiceHealthCheck("TapiSrv", x => x.Status == ServiceControllerStatus.Running, null, "TapiService", null, new[] {
+                    "Windows-Service",
+                })
+                .AddCheck<IsEvenMinuteHealthCheck>("SampleCheck", null, new[] {"SLA"})
+                .AddUrlGroup(new Uri("https://localhost:5001/WeatherForecast"), "Weatherforecase endpoint");
+            ;
+            services.AddHealthChecksUI().AddInMemoryStorage();
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "TyrolSky.Portal", Version = "v1"}); });
         }
@@ -38,7 +53,18 @@ namespace TyrolSky.Portal {
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/healthz", new HealthCheckOptions {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/healthSla", new HealthCheckOptions {
+                    Predicate = check => check.Tags.Contains("SLA"),
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecksUI(setupOptions => { });
+            });
         }
     }
 

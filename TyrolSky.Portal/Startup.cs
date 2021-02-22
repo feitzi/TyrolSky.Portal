@@ -12,6 +12,7 @@ namespace TyrolSky.Portal {
     using HealthCheck;
     using HealthChecks.UI.Client;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
 
     public class Startup {
         public Startup(IConfiguration configuration) {
@@ -32,6 +33,7 @@ namespace TyrolSky.Portal {
                     "Windows-Service",
                 })
                 .AddCheck<IsEvenMinuteHealthCheck>("SampleCheck", null, new[] {"SLA"})
+                .AddCheck<LongRunningCheck>("LongRunning", HealthStatus.Degraded, new[] {"SLA"}, TimeSpan.FromSeconds(5))
                 .AddUrlGroup(new Uri("https://localhost:5001/WeatherForecast"), "Weatherforecase endpoint");
             ;
             services.AddHealthChecksUI().AddInMemoryStorage();

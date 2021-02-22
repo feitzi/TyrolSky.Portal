@@ -8,9 +8,9 @@ namespace TyrolSky.Portal {
 
     public class Program {
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", false, true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
-            .AddJsonFile($"appsettings.{Environment.MachineName}.json", true)
+            .AddJsonFile("config/appsettings.json", false, true)
+            .AddJsonFile($"config/appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+            .AddJsonFile($"config/appsettings.{Environment.MachineName}.json", true)
             .AddEnvironmentVariables()
             .Build();
 
@@ -29,6 +29,7 @@ namespace TyrolSky.Portal {
 
         public static IHostBuilder CreateHostBuilder(string[] args) {
             return Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(builder => builder.AddConfiguration(Configuration))
                 .UseSerilog() // Add this
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();

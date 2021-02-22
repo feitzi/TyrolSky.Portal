@@ -36,7 +36,11 @@ namespace TyrolSky.Portal {
                 .AddCheck<LongRunningCheck>("LongRunning", HealthStatus.Degraded, new[] {"SLA"}, TimeSpan.FromSeconds(5))
                 .AddUrlGroup(new Uri("https://localhost:5001/WeatherForecast"), "Weatherforecase endpoint");
             ;
-            services.AddHealthChecksUI().AddInMemoryStorage();
+            services.AddHealthChecksUI(settings => {
+                    // Set the maximum history entries by endpoint that will be served by the UI api middleware
+                    settings.MaximumHistoryEntriesPerEndpoint(50);
+                })
+                .AddInMemoryStorage();
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "TyrolSky.Portal", Version = "v1"}); });
         }

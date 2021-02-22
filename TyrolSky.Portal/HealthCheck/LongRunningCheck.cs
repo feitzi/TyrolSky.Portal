@@ -6,7 +6,7 @@
     using Microsoft.Extensions.Logging;
 
     public class LongRunningCheck : IHealthCheck {
-        public ILogger<LongRunningCheck> Logger { get; }
+        private ILogger<LongRunningCheck> Logger { get; }
 
         public LongRunningCheck(ILogger<LongRunningCheck> logger) {
             Logger = logger;

@@ -1,18 +1,17 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-
 namespace TyrolSky.Portal {
     using System;
     using System.ServiceProcess;
     using Configuration;
     using HealthCheck;
     using HealthChecks.UI.Client;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
 
     public class Startup {
         public Startup(IConfiguration configuration) {
@@ -23,19 +22,10 @@ namespace TyrolSky.Portal {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.Configure<SampleConfiguration>(Configuration.GetSection(SampleConfiguration.ConfigPath));
+            ConfigRegistry.RegisterConfiguration(services, Configuration);
 
-            services.AddHealthChecks()
-                .AddDiskStorageHealthCheck(options => {
-                    options.AddDrive("C:\\", 1000);
-                })
-                .AddWindowsServiceHealthCheck("TapiSrv", x => x.Status == ServiceControllerStatus.Running, null, "TapiService", null, new[] {
-                    "Windows-Service",
-                })
-                .AddCheck<IsEvenMinuteHealthCheck>("SampleCheck", null, new[] {"SLA"})
-                .AddCheck<LongRunningCheck>("LongRunning", HealthStatus.Degraded, new[] {"SLA"}, TimeSpan.FromSeconds(5))
-                .AddUrlGroup(new Uri("https://localhost:5001/WeatherForecast"), "Weatherforecase endpoint");
-            ;
+            services.AddHealthChecks().UseTyrolSkyChecks();
+            
             services.AddHealthChecksUI(settings => {
                     // Set the maximum history entries by endpoint that will be served by the UI api middleware
                     settings.MaximumHistoryEntriesPerEndpoint(50);

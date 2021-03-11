@@ -28,7 +28,7 @@
         [HttpGet]
         public IEnumerable<WeatherForecast> Get() {
             _logger.LogInformation("This is a test call {@ConfigValue}", Configuration.Value);
-            
+
             Random rng = new Random();
             return Enumerable.Range(1, 5)
                 .Select(index => new WeatherForecast {

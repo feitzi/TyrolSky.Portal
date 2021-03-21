@@ -1,18 +1,14 @@
 ﻿version: '2'
 
 services:
-  seq:
-    image: datalust/seq
-    restart: always
-    environment:
-      - ACCEPT_EULA=Y
+  redis:
+    image: redis:6.2.1-alpine
     ports:
-      - 9051:80 # UI
-      - 5342:5341 # Data ingest
+      - 6379:6379
     volumes:
-      - seq_data:/data
+      - ./redis/config:/etc/redis
+      - ./redis/storage:/data
+    command: [ "redis-server", "/etc/redis/redis.conf" ]
 
-volumes:
-  seq_data:
 
 

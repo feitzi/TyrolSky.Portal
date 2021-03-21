@@ -1,11 +1,9 @@
 ﻿namespace TyrolSky.Portal.Controllers {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using Configuration;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
@@ -34,10 +32,11 @@
                 .Select(index => new WeatherForecast {
                     Date = DateTime.Now.AddDays(index),
                     TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)],
+                    Summary = Summaries[rng.Next(Summaries.Length)]
                 })
                 .ToArray();
         }
+
     }
 
 }

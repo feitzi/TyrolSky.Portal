@@ -12,6 +12,8 @@ namespace TyrolSky.Portal {
     using Microsoft.Extensions.Diagnostics.HealthChecks;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
+    using StackExchange.Redis.Extensions.Core.Configuration;
+    using StackExchange.Redis.Extensions.Newtonsoft;
 
     public class Startup {
         public Startup(IConfiguration configuration) {
@@ -25,13 +27,17 @@ namespace TyrolSky.Portal {
             ConfigRegistry.RegisterConfiguration(services, Configuration);
 
             services.AddHealthChecks().UseTyrolSkyChecks();
-            
+
             services.AddHealthChecksUI(settings => {
                     // Set the maximum history entries by endpoint that will be served by the UI api middleware
                     settings.MaximumHistoryEntriesPerEndpoint(50);
                 })
                 .AddInMemoryStorage();
             services.AddControllers();
+            var redisConfig = Configuration.GetSection("Redis").Get<RedisConfiguration>();
+            services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfig);
+            services.AddHealthChecks().AddRedis("localhost:6379");
+
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "TyrolSky.Portal", Version = "v1"}); });
         }
 
@@ -48,7 +54,6 @@ namespace TyrolSky.Portal {
             app.UseRouting();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz", new HealthCheckOptions {

@@ -1,17 +1,15 @@
 version: '3.2'
-
 services:
-  redis:
-    image: redis:6.2.1-alpine
-    ports:
-      - 6379:6379
-    networks:
-      - directus
-    volumes:
-      - ./redis/config:/etc/redis
-      - ./redis/storage:/data
-    command: [ "redis-server", "/etc/redis/redis.conf" ]
-
+#  databasePg:
+#    container_name: database
+#    image: postgres:12
+#    networks:
+#      - directus
+#    environment:
+#      POSTGRES_USER: 'directus'
+#      POSTGRES_PASSWORD: 'directus'
+#      POSTGRES_DB: 'directus'
+      
   databaseMsSql:
     image: "mcr.microsoft.com/mssql/server:2019-latest"
     environment:
@@ -25,37 +23,50 @@ services:
     volumes:
       - mssql_system:/var/opt/mssql
       - mssql_user:/var/opt/sqlserver
-      - c:/temp:/temp
+      - c:/temp:/temp    
+
+  redis:
+    image: redis:6.2.1-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - directus
+    volumes:
+      - ./redis/config:/etc/redis
+      - ./redis/storage:/data
+    command: [ "redis-server", "/etc/redis/redis.conf" ]
 
   directus:
+    container_name: directus
     image: directus/directus:v9.0.0-rc.51
     ports:
       - 8055:8055
     networks:
       - directus
+    depends_on:
+      - redis
+      - databaseMsSql
     environment:
-      KEY: '5AB85FAB-9A9A-4D97-99F8-6AFABB65ECB3'
-      SECRET: 'B253FEC5-1682-4D3A-9BCB-754A388CC987'
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
 
       DB_CLIENT: 'mssql'
       DB_HOST: 'databaseMsSql'
       DB_PORT: '1433'
       DB_DATABASE: 'directus'
       DB_USER: 'sa'
-      DB_PASSWORD: "Abc!1234"
+      DB_PASSWORD: 'Abc!1234'
 
       CACHE_ENABLED: 'true'
       CACHE_STORE: 'redis'
-      CACHE_REDIS: 'redis://cache:6379'
+      CACHE_REDIS: 'redis://redis:6379'
 
-      ADMIN_EMAIL: 'mfe@world-direct.at'
-      ADMIN_PASSWORD: 'password'
+      ADMIN_EMAIL: 'admin@example.com'
+      ADMIN_PASSWORD: 'd1r3ctu5'
 
 networks:
   directus:
-
+    
 volumes:
   mssql_system:
   mssql_user:
-
-

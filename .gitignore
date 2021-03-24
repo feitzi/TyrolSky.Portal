@@ -6,3 +6,4 @@ riderModule.iml
 publish/
 /TyrolSky.Portal/logs/
 /SolutionItems/TyrolSkyTools/redis/storage/
+/SolutionItems/TyrolSkyTools/directus/

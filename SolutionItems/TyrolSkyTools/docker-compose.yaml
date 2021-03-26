@@ -56,8 +56,15 @@ services:
       ADMIN_EMAIL: 'mfe@world-direct.at'
       ADMIN_PASSWORD: 'password'
 
+
+  mesh:
+    image: "gentics/mesh-demo:latest"
+    ports:
+      - 8085:8080
+
 networks:
   directus:
+  squidex:
     
 volumes:
   mssql_system:

@@ -4,6 +4,8 @@ namespace TyrolSky.Portal {
     using Configuration;
     using HealthCheck;
     using HealthChecks.UI.Client;
+    using MediatorHandling;
+    using MediatR;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
@@ -27,7 +29,8 @@ namespace TyrolSky.Portal {
             ConfigRegistry.RegisterConfiguration(services, Configuration);
 
             services.AddHealthChecks().UseTyrolSkyChecks();
-
+            services.RegisterMediatorHandling();
+            
             services.AddHealthChecksUI(settings => {
                     // Set the maximum history entries by endpoint that will be served by the UI api middleware
                     settings.MaximumHistoryEntriesPerEndpoint(50);

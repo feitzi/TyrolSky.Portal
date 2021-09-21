@@ -48,6 +48,8 @@ namespace TyrolSky.Portal {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TyrolSky.Portal v1"));
             }
+            
+            
 
             app.UseHttpsRedirection();
 
